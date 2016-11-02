@@ -29,54 +29,63 @@ namespace Vsite.Pood
             }
         }
 
+        static bool[] f;
+
         // Primjer iz knjige  Robert C. Martin: "Agile Software Development"!!!
-        public static int[] GenerirajPrimBrojeve(int max) 
+        public static int[] GenerirajPrimBrojeve(int max)
         {
-            if (max >= 2)
+            if (max < 2)
+                return new int[0];
+            InicijalizirajSito(max);
+            Prosijaj();
+            return IzdvojiPrimBrojeve(max);
+        }
+
+        private static int[] IzdvojiPrimBrojeve(int max)
+        {
+            int broj = 0;
+            for (int i = 2; i < f.Length; ++i)
             {
-                // deklaracije
-                int s = max + 1; // duljina niza
-                bool[] f = new bool[s]; // niz s primbrojevima
-                int i;
-
-                // inicijaliziramo sve na true
-                for (i = 0; i < s; ++i)
-                    f[i] = true;
-
-                // ukloni 0 i 1 koji su primbrojevi po definiciji
-                f[0] = f[1] = false;
-
-                // sito (ide do kvadratnog korijena maksimalnog broja)
-                int j;
-                for (i = 2; i < Math.Sqrt(s); ++i)
-                {
-                    if (f[i]) // ako je i prekrižen, prekriži i višekratnike
-                    {
-                        for (j = 2 * i; j < s; j += i)
-                            f[j] = false; // višekratnik nije primbroj
-                    }
-                }
-
-                // koliko je primbrojeva?
-                int broj = 0;
-                for (i = 0; i < s; ++i)
-                {
-                    if (f[i])
-                        ++broj;
-                }
-
-                int[] primovi = new int[broj];
-
-                // prebaci primbrojeve u rezultat
-                for (i = 0, j = 0; i < s; ++i)
-                {
-                    if (f[i])
-                        primovi[j++] = i;
-                }
-                return primovi; // vrati niz brojeva
+                if (f[i])
+                    ++broj;
             }
-            else
-                return new int[0]; // vrati prazan niz
+
+            int[] primovi = new int[broj];
+
+            // prebaci primbrojeve u rezultat
+            for (int i = 0, j = 0; i < f.Length; ++i)
+            {
+                if (f[i])
+                    primovi[j++] = i;
+            }
+            return primovi; // vrati niz brojeva
+        }
+
+        private static void Prosijaj()
+        {
+            for (int i = 2; i < Math.Sqrt(f.Length); ++i)
+            {
+                if (f[i]) // ako je i prekrižen, prekriži i višekratnike
+                {
+                    EliminirajViešekratnike(i);
+                }
+            }
+
+        }
+
+        private static void EliminirajViešekratnike(int i)
+        {
+            for (int j = 2 * i; j < f.Length; j += i)
+                f[j] = false; // višekratnik nije primbroj
+        }
+
+        private static void InicijalizirajSito(int max)
+        {
+            f = new bool[max + 1]; // niz s primbrojevima
+
+            // inicijaliziramo sve na true
+            for (int i = 2; i < f.Length; ++i)
+                f[i] = true;
         }
     }
 }
